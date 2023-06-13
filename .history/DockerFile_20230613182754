@@ -1,0 +1,60 @@
+# Определение базового образа
+FROM node:18.16.0-alpine AS deps
+
+# Установка необходимых зависимостей для MongoDB
+RUN apk add --no-cache libc6-compat
+
+# Установка рабочей директории
+WORKDIR /app
+
+# Копирование файлов package.json, yarn.lock, package-lock.json, pnpm-lock.yaml
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+
+# Установка версии npm
+RUN npm install -g npm@9.6.6
+
+# Установка зависимостей
+RUN npm ci
+
+# Определение базового образа для сборки
+FROM node:18.16.0-alpine AS builder
+
+# Установка рабочей директории
+WORKDIR /app
+
+# Копирование зависимостей из предыдущего этапа
+COPY --from=deps /app/node_modules ./node_modules
+
+# Копирование остальных файлов проекта
+COPY . .
+
+# Сборка проекта
+RUN npm run build
+
+# Определение базового образа для запуска
+FROM node:18.16.0-alpine AS runner
+
+# Установка рабочей директории
+WORKDIR /app
+
+# Создание пользователей
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 mongodb
+
+# Копирование необходимых файлов из предыдущего этапа
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/package.json ./package.json
+
+# Установка пользователя mongodb как активного пользователя
+USER mongodb
+
+# Открытие порта для приложения
+EXPOSE 5000
+
+# Определение переменной окружения PORT
+ENV PORT 3000
+
+# Запуск приложения
+CMD ["npm", "run", "start"]
