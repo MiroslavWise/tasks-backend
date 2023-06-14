@@ -4,5 +4,5 @@ import { Connection } from 'mongoose';
 
 @Injectable()
 export class DatabaseService {
-        // constructor(@InjectConnection('board') private connection: Connection){}
+        // constructor(@InjectConnection(Connection.name) private connection: Connection){}
 }

@@ -5,9 +5,11 @@ import { MongooseModuleOptions, MongooseOptionsFactory } from '@nestjs/mongoose'
 export class DatabaseConnection implements MongooseOptionsFactory {
         createMongooseOptions(): MongooseModuleOptions {
                 return {
-                        uri: 'mongodb://localhost/board',
+                        uri: process.env.MONGO_BD_HOST,
                         useNewUrlParser: true,
                         useUnifiedTopology: true,
+                        // user: process.env.MONGO_BD_USER,
+                        // pass: process.env.MONGO_BD_PASSWORD,
                 };
         }
 }

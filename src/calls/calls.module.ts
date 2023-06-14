@@ -1,21 +1,20 @@
 import { Module } from '@nestjs/common';
 import { CallsService } from './calls.service';
-import { CallsController } from './calls.controller';
-import { DatabaseModule } from 'src/database/database.module';
-import { CallsSchema } from './calls.schema';
+import { CallController, CallsController, MoveBetweenController, MoveSingleController } from './calls.controller';
+import { Calls, CallsSchema } from './calls.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: 'calls',
+        name: Calls.name,
         schema: CallsSchema,
       },
     ]),
-    DatabaseModule,
   ],
   providers: [CallsService],
-  controllers: [CallsController]
+  controllers: [CallsController, CallController, MoveSingleController, MoveBetweenController],
+  exports: [CallsService],
 })
 export class CallsModule {}

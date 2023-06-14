@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    restart: always
+    build:
+      context: ./
+      args:
+        - TARGET=development
+    volumes:
+      - ./usr/src/app:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+    networks:
+      - express-mongo
+      - react-express
+    expose:
+      - 5000
+    environment:
+      - NODE_ENV=development
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    networks:
+      - express-mongo
+
+networks:
+  express-mongo:
+  react-express:

@@ -1,6 +1,6 @@
 export class ExecutorsDtoCreate {
         uuid: string
-        dateExecuting: string | null
+        dateExecution: string | null
         performing: boolean
         executor: {
                 uuid: string

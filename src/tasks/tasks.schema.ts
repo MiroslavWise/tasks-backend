@@ -1,41 +1,45 @@
 import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
+import { IsNotEmpty } from 'class-validator'
 import { HydratedDocument } from 'mongoose';
 
-export type TasksDocument = HydratedDocument<Tasks>
 
 type IPriority = "low" | "medium" | "hight" | "no_priority" | "highest"
 
 @Schema()
 export class Tasks {
-        @Prop({ required: true })
+        @Prop({ required: true, unique: true })
+        @IsNotEmpty()
         uuid: string
-
+        
         @Prop({ required: true })
+        @IsNotEmpty()
         uuid_call: string
-
+        
         @Prop({ required: true })
+        @IsNotEmpty()
         title: string
-
+        
         @Prop(raw({
                 uuid: String,
                 getFullNameRu: String,
         }))
         author: Record<string, string>
-
-        @Prop()
-        description: string
-
-        @Prop()
+        
+        @Prop({ default: "" })
+        description?: string
+        
+        @Prop({ default: 'no_priority' })
         priority: IPriority
-
-        @Prop()
-        readiness: boolean
-
+        
+        @Prop({ default: undefined })
+        readiness?: boolean | undefined
+        
         @Prop([String])
         executors: string[]
-
-        @Prop()
+        
+        @Prop({ default: null })
         dateExecution: string | null
 }
 
+export type TasksDocument = HydratedDocument<Tasks>
 export const TasksSchema = SchemaFactory.createForClass(Tasks)

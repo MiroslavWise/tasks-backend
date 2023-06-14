@@ -1,21 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ExecutorsService } from './executors.service';
-import { ExecutorsController } from './executors.controller';
-import { ExecutorsSchema } from './executors.schema';
+import { ExecutorsController, ExecutorsControllerAll } from './executors.controller';
+import { Executors, ExecutorsSchema } from './executors.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { DatabaseModule } from 'src/database/database.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: 'executors',
+        name: Executors.name,
         schema: ExecutorsSchema,
       },
-    ]),
-    DatabaseModule,
+    ])
   ],
   providers: [ExecutorsService],
-  controllers: [ExecutorsController]
+  controllers: [ExecutorsController, ExecutorsControllerAll],
+  exports: [ExecutorsService],
 })
 export class ExecutorsModule { }
